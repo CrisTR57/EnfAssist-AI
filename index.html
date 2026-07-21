@@ -1,0 +1,95 @@
+<!doctype html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="theme-color" content="#0875d1" />
+    <title>EnfAssist-AI</title>
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <main class="app-shell" aria-live="polite">
+      <section id="login-screen" class="screen login-screen">
+        <div class="brand">
+          <div class="brand-mark" aria-hidden="true">✚</div>
+          <h1>EnfAssist<span>-AI</span></h1>
+          <p>Asistente Inteligente de Enfermería</p>
+        </div>
+        <div class="login-copy">
+          <h2>Bienvenido nuevamente</h2>
+          <p>Ingresa tus credenciales para continuar</p>
+        </div>
+        <form id="login-form" class="login-form">
+          <label>Usuario / DNI<input required name="username" inputmode="numeric" placeholder="Ej. 12345678" /></label>
+          <label>Contraseña<input required name="password" type="password" placeholder="Ingresa tu contraseña" /></label>
+          <div class="form-row"><label class="check"><input type="checkbox" checked /> Recordarme</label><button type="button" class="link">¿Olvidaste tu contraseña?</button></div>
+          <button class="primary-button" type="submit">🔒 &nbsp; INGRESAR</button>
+        </form>
+        <div class="or"><span>o continúa con</span></div>
+        <button class="quick-access" type="button">✚ &nbsp; Acceso rápido para enfermería</button>
+        <p class="signup">¿No tienes cuenta? <button type="button" class="link">Registrar usuario</button></p>
+      </section>
+
+      <section id="dashboard-screen" class="screen dashboard-screen" hidden>
+        <header class="topbar">
+          <button class="icon-button" aria-label="Abrir menú">☰</button>
+          <div><strong>EnfAssist-AI</strong><small>Área: Enfermería</small></div>
+          <button class="bell" aria-label="5 alertas pendientes">♟<b>5</b></button>
+          <div class="avatar" aria-label="Perfil de María Fernández">MF</div>
+        </header>
+        <div class="content">
+          <section class="welcome"><div><p>¡Buenos días!</p><h2>Lic. María Fernández</h2><small>Hoy es 21 de julio de 2026</small></div><div class="system-status">✓<small>Sistema<br /><b>Activo</b></small></div></section>
+          <section class="stats" aria-label="Resumen"><article><i>♟</i><strong>245</strong><span>Pacientes<br />registrados</span></article><article><i>▣</i><strong>37</strong><span>Atenciones<br />hoy</span></article><article><i>▤</i><strong>18</strong><span>FUAs<br />generados</span></article><article><i>♟</i><strong class="warning">5</strong><span>Alertas<br />pendientes</span></article></section>
+          <h3>Accesos rápidos</h3>
+          <section class="quick-grid"><button data-action="Escanear QR de paciente">▣<span>Escanear QR<br />de Paciente</span></button><button data-action="Nueva atención">✚<span>Nueva<br />Atención</span></button><button data-action="Generar FUA con IA">▤<span>Generar FUA<br />con IA</span></button><button data-action="Ver pacientes">♟<span>Ver Pacientes</span></button><button data-action="Reportes">▥<span>Reportes</span></button><button data-action="EnfAI Asistente">☻<span>EnfAI<br />Asistente</span></button></section>
+          <div class="section-title"><h3>Atenciones recientes</h3><button class="link" type="button">Ver todas</button></div>
+          <section class="recent-list">
+            <article><div class="patient-avatar man">JP</div><time>10:45 a.m.</time><div><strong>Juan Pérez</strong><span>Control de signos vitales</span></div><em>Completada</em><b>›</b></article>
+            <article><div class="patient-avatar woman">RI</div><time>09:20 a.m.</time><div><strong>Rosa Isuiza</strong><span>Curación + Procedimiento</span></div><em>Completada</em><b>›</b></article>
+            <article><div class="patient-avatar woman">ML</div><time>08:15 a.m.</time><div><strong>María López</strong><span>Triaje</span></div><em>Completada</em><b>›</b></article>
+          </section>
+        </div>
+        <nav class="bottom-nav"><button class="active">⌂<span>Inicio</span></button><button>♟<span>Pacientes</span></button><button class="new-care" data-action="Nueva atención">＋<span>Nueva Atención</span></button><button>▤<span>FUA</span></button><button data-action="EnfAI Asistente">☻<span>EnfAI</span></button></nav>
+      </section>
+
+      <section id="scanner-screen" class="screen scanner-screen" hidden>
+        <header class="scanner-header">
+          <button id="scanner-back" class="round-control" aria-label="Volver">‹</button>
+          <div><strong>Escanear QR de Paciente</strong><small>Acerca el código QR al marco</small></div>
+          <button id="flash-button" class="round-control" aria-label="Activar flash">⌁</button>
+        </header>
+        <div class="camera-stage">
+          <video id="camera-video" autoplay playsinline muted></video>
+          <div class="camera-fallback">La cámara se activará al abrir esta pantalla.</div>
+          <div class="scanner-tip">▣ <span>Posiciona el código QR<br />dentro del marco</span></div>
+          <div class="scanner-frame" aria-label="Marco de escaneo"><span></span></div>
+          <div class="scan-line"></div>
+          <div class="scanner-tools">
+            <label class="camera-tool">▧<span>Galería</span><input id="gallery-input" type="file" accept="image/*" /></label>
+            <button id="flash-tool" class="camera-tool" type="button">ϟ<span>Flash</span><small>Automático</small></button>
+          </div>
+          <p class="secure-note">ⓘ &nbsp; El código QR contiene información segura del paciente</p>
+        </div>
+        <section id="patient-card" class="patient-sheet" hidden>
+          <div class="sheet-handle"></div>
+          <div class="patient-heading"><span class="identified">✓</span><div><h2>Paciente identificado</h2><p>Información obtenida del código QR</p></div><em>Conectado ●</em></div>
+          <article class="patient-profile"><div class="large-avatar">JP</div><div><h3>Juan Pérez Ramírez</h3><p>ID: PAC-0001254 &nbsp;•&nbsp; DNI: 12345678</p><p>♙ &nbsp;65 años &nbsp;•&nbsp; ♂ Masculino &nbsp;•&nbsp; O+</p><p>Dirección: Jr. Los Sauces 123, Tingo María</p><p>Teléfono: 987 654 321</p></div><div class="last-care">ⓘ &nbsp; Última atención: 12/07/2026 &nbsp;•&nbsp; Control de signos vitales</div><div class="patient-actions"><button type="button" data-action="Ver perfil completo">♙ &nbsp; Ver perfil completo</button><button type="button" data-action="Nueva atención">⊕ &nbsp; Nueva atención</button></div></article>
+        </section>
+        <nav class="bottom-nav scanner-nav"><button id="scanner-home">⌂<span>Inicio</span></button><button>♙<span>Pacientes</span></button><button class="new-care active">▣<span>Escanear</span></button><button>▤<span>FUA</span></button><button>☻<span>EnfAI</span></button></nav>
+      </section>
+      <section id="care-screen" class="screen care-screen" hidden>
+        <header class="care-header"><button id="care-back" class="round-control" aria-label="Volver">&lsaquo;</button><div><strong>Nueva atención</strong><small>Registro clínico de enfermería</small></div><button class="round-control" type="button" data-action="Ayuda">?</button></header>
+        <form id="care-form" class="care-form">
+          <section class="selected-patient"><div class="mini-avatar">JP</div><div><small>Paciente seleccionado</small><strong>Juan Pérez Ramírez</strong><span>PAC-0001254 · 65 años · O+</span></div><button type="button" data-action="Cambiar paciente">Cambiar</button></section>
+          <section class="form-card"><h2>Datos de la atención</h2><label>Tipo de atención<select required><option value="">Selecciona una opción</option><option>Control de signos vitales</option><option>Triaje</option><option>Curación</option><option>Administración de medicamento</option></select></label><label>Fecha y hora<input type="datetime-local" value="2026-07-21T09:30" required /></label></section>
+          <section class="form-card"><div class="card-title"><h2>Signos vitales</h2><span>Opcional</span></div><div class="vitals-grid"><label>Presión arterial<input inputmode="numeric" placeholder="120/80" /><small>mmHg</small></label><label>Temperatura<input inputmode="decimal" placeholder="36.5" /><small>°C</small></label><label>Frecuencia cardiaca<input inputmode="numeric" placeholder="72" /><small>lpm</small></label><label>Saturación O₂<input inputmode="numeric" placeholder="98" /><small>%</small></label></div></section>
+          <section class="form-card"><label>Notas de enfermería<textarea rows="4" placeholder="Describe la valoración, procedimiento realizado y observaciones relevantes."></textarea></label></section>
+          <div class="care-actions"><button class="draft-button" type="button" data-action="Guardar borrador">Guardar borrador</button><button class="save-care" type="submit">✓ &nbsp; Registrar atención</button></div>
+        </form>
+        <nav class="bottom-nav care-nav"><button id="care-home">⌂<span>Inicio</span></button><button>♙<span>Pacientes</span></button><button class="new-care active">＋<span>Nueva Atención</span></button><button>▤<span>FUA</span></button><button>☻<span>EnfAI</span></button></nav>
+      </section>
+    </main>
+    <div id="toast" role="status"></div>
+    <script src="app.js"></script>
+  </body>
+</html>

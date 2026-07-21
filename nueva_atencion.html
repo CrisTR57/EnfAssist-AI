@@ -1,0 +1,277 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>EnfAssist-AI - Nueva Atención</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Plus Jakarta Sans', 'sans-serif'],
+                    },
+                    colors: {
+                        brand: {
+                            50: '#f0f7ff',
+                            100: '#e0effe',
+                            500: '#0284c7',
+                            600: '#0369a1',
+                            700: '#005088',
+                            800: '#075985',
+                        },
+                        clinical: {
+                            teal: '#0d9488',
+                            green: '#10b981',
+                            accent: '#11caa0'
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        /* Custom scrollbar hide for cleaner preview */
+        .no-scrollbar::-webkit-scrollbar {
+            display: none;
+        }
+        .no-scrollbar {
+            -ms-overflow-style: none;
+            scrollbar-width: none;
+        }
+    </style>
+</head>
+<body class="bg-slate-900 min-h-screen flex items-center justify-center p-4 sm:p-6 font-sans">
+
+    <!-- Mobile Device Container -->
+    <div class="relative w-[390px] h-[844px] bg-slate-950 rounded-[50px] p-3 shadow-2xl ring-1 ring-slate-800 flex flex-col">
+        
+        <!-- Screen Frame -->
+        <div class="relative w-full h-full bg-slate-50 rounded-[40px] overflow-hidden flex flex-col no-scrollbar">
+            
+            <!-- Dynamic Island / Notch -->
+            <div class="absolute top-0 left-1/2 -translate-x-1/2 h-7 w-28 bg-black rounded-b-2xl z-50 flex items-center justify-center">
+                <div class="w-2.5 h-2.5 bg-slate-900 rounded-full mr-2"></div>
+                <div class="w-3 h-3 bg-slate-900 rounded-full border border-slate-800"></div>
+            </div>
+
+            <!-- Top Status Bar Spacer -->
+            <div class="pt-2 px-6 h-11 flex justify-between items-center text-xs text-slate-800 font-semibold bg-white z-40">
+                <span>09:41</span>
+                <div class="flex items-center gap-1.5">
+                    <i class="fa-solid fa-signal text-[10px]"></i>
+                    <i class="fa-solid fa-wifi text-[10px]"></i>
+                    <i class="fa-solid fa-battery-full text-xs"></i>
+                </div>
+            </div>
+
+            <!-- Header -->
+            <header class="bg-white border-b border-slate-100 px-5 py-3 flex items-center justify-between z-30 sticky top-0 shadow-sm">
+                <button class="w-9 h-9 rounded-full bg-slate-100 hover:bg-slate-200 flex items-center justify-center text-slate-700 transition">
+                    <i class="fa-solid fa-arrow-left text-sm"></i>
+                </button>
+                <div class="text-center">
+                    <h1 class="text-slate-900 font-bold text-base leading-tight">Nueva Atención</h1>
+                    <p class="text-brand-600 font-medium text-[11px]">EnfAssist-AI • Triaje</p>
+                </div>
+                <button class="w-9 h-9 rounded-full bg-brand-50 text-brand-600 flex items-center justify-center font-semibold text-xs border border-brand-100">
+                    <i class="fa-solid fa-circle-question text-sm"></i>
+                </button>
+            </header>
+
+            <!-- Scrollable Main Content -->
+            <main class="flex-1 overflow-y-auto px-4 py-4 space-y-4 no-scrollbar pb-24">
+
+                <!-- Step Indicator Progress Bar -->
+                <div class="bg-white p-3 rounded-2xl border border-slate-100 shadow-sm space-y-2">
+                    <div class="flex justify-between items-center text-xs">
+                        <span class="font-bold text-slate-700">Paso 2 de 3: Signos Vitales</span>
+                        <span class="text-brand-600 font-semibold">66% Completado</span>
+                    </div>
+                    <div class="w-full bg-slate-100 h-2 rounded-full overflow-hidden">
+                        <div class="bg-gradient-to-r from-brand-500 to-clinical-accent h-full w-2/3 rounded-full"></div>
+                    </div>
+                </div>
+
+                <!-- Patient Card (Pre-selected) -->
+                <div class="bg-gradient-to-br from-brand-700 to-brand-800 rounded-2xl p-4 text-white shadow-md relative overflow-hidden">
+                    <div class="absolute -right-4 -bottom-4 w-24 h-24 bg-white/10 rounded-full blur-xl"></div>
+                    <div class="flex items-center justify-between mb-3">
+                        <span class="bg-emerald-500/20 text-emerald-300 text-[10px] font-semibold px-2.5 py-0.5 rounded-full border border-emerald-400/30 flex items-center gap-1">
+                            <i class="fa-solid fa-qrcode text-[9px]"></i> Paciente Validado
+                        </span>
+                        <button class="text-xs text-brand-100 hover:underline flex items-center gap-1">
+                            Cambiar <i class="fa-solid fa-chevron-right text-[10px]"></i>
+                        </button>
+                    </div>
+
+                    <div class="flex items-center gap-3">
+                        <div class="w-12 h-12 rounded-full bg-white/10 border-2 border-white/20 flex items-center justify-center font-bold text-lg text-white">
+                            JP
+                        </div>
+                        <div>
+                            <h2 class="font-bold text-base text-white leading-snug">Juan Pérez Gómez</h2>
+                            <p class="text-xs text-brand-100 font-medium">DNI: 45871239 • 54 años</p>
+                            <div class="flex items-center gap-2 mt-1 text-[11px] text-brand-200">
+                                <span><i class="fa-solid fa-bed text-[10px] mr-1"></i>Cama 04</span>
+                                <span>•</span>
+                                <span><i class="fa-solid fa-notes-medical text-[10px] mr-1"></i>HC: #00892</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Vital Signs Grid -->
+                <section class="bg-white rounded-2xl p-4 border border-slate-100 shadow-sm space-y-3">
+                    <div class="flex items-center justify-between">
+                        <h3 class="font-bold text-slate-800 text-sm flex items-center gap-2">
+                            <i class="fa-solid fa-heart-pulse text-rose-500"></i> Funciones Vitales
+                        </h3>
+                        <span class="text-[10px] bg-slate-100 text-slate-600 px-2 py-0.5 rounded-full font-medium">Auto-captura bluetooth activa</span>
+                    </div>
+
+                    <div class="grid grid-cols-2 gap-2.5">
+                        <!-- PA -->
+                        <div class="bg-slate-50 p-2.5 rounded-xl border border-slate-200/80 focus-within:border-brand-500 focus-within:bg-white transition">
+                            <label class="text-[11px] font-semibold text-slate-500 block mb-1">Presión Arterial</label>
+                            <div class="flex items-center justify-between">
+                                <input type="text" value="120/80" class="w-full bg-transparent font-bold text-slate-800 text-base focus:outline-none">
+                                <span class="text-[10px] font-medium text-slate-400">mmHg</span>
+                            </div>
+                        </div>
+
+                        <!-- FC -->
+                        <div class="bg-slate-50 p-2.5 rounded-xl border border-slate-200/80 focus-within:border-brand-500 focus-within:bg-white transition">
+                            <label class="text-[11px] font-semibold text-slate-500 block mb-1">Frec. Cardíaca</label>
+                            <div class="flex items-center justify-between">
+                                <input type="number" value="78" class="w-full bg-transparent font-bold text-slate-800 text-base focus:outline-none">
+                                <span class="text-[10px] font-medium text-slate-400">bpm</span>
+                            </div>
+                        </div>
+
+                        <!-- Temp -->
+                        <div class="bg-slate-50 p-2.5 rounded-xl border border-slate-200/80 focus-within:border-brand-500 focus-within:bg-white transition">
+                            <label class="text-[11px] font-semibold text-slate-500 block mb-1">Temperatura</label>
+                            <div class="flex items-center justify-between">
+                                <input type="text" value="36.8" class="w-full bg-transparent font-bold text-slate-800 text-base focus:outline-none">
+                                <span class="text-[10px] font-medium text-slate-400">°C</span>
+                            </div>
+                        </div>
+
+                        <!-- SpO2 -->
+                        <div class="bg-slate-50 p-2.5 rounded-xl border border-slate-200/80 focus-within:border-brand-500 focus-within:bg-white transition">
+                            <label class="text-[11px] font-semibold text-slate-500 block mb-1">Saturación SpO2</label>
+                            <div class="flex items-center justify-between">
+                                <input type="number" value="98" class="w-full bg-transparent font-bold text-slate-800 text-base focus:outline-none">
+                                <span class="text-[10px] font-medium text-slate-400">%</span>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Procedures Quick Select Tags -->
+                <section class="bg-white rounded-2xl p-4 border border-slate-100 shadow-sm space-y-3">
+                    <h3 class="font-bold text-slate-800 text-sm flex items-center gap-2">
+                        <i class="fa-solid fa-hand-holding-medical text-brand-600"></i> Procedimiento Realizado
+                    </h3>
+                    <div class="flex flex-wrap gap-1.5">
+                        <button class="px-3 py-1.5 rounded-xl text-xs font-semibold bg-brand-600 text-white shadow-sm flex items-center gap-1.5">
+                            <i class="fa-solid fa-check text-[10px]"></i> Control Signos
+                        </button>
+                        <button class="px-3 py-1.5 rounded-xl text-xs font-medium bg-slate-100 text-slate-700 hover:bg-slate-200">
+                            Curación
+                        </button>
+                        <button class="px-3 py-1.5 rounded-xl text-xs font-medium bg-slate-100 text-slate-700 hover:bg-slate-200">
+                            Vía EV / Suero
+                        </button>
+                        <button class="px-3 py-1.5 rounded-xl text-xs font-medium bg-slate-100 text-slate-700 hover:bg-slate-200">
+                            Administración Inyectable
+                        </button>
+                    </div>
+                </section>
+
+                <!-- Nursing Observations with Voice AI -->
+                <section class="bg-white rounded-2xl p-4 border border-slate-100 shadow-sm space-y-2">
+                    <div class="flex justify-between items-center">
+                        <h3 class="font-bold text-slate-800 text-sm flex items-center gap-2">
+                            <i class="fa-solid fa-pen-to-square text-brand-600"></i> Notas de Enfermería
+                        </h3>
+                        <button class="text-xs text-brand-600 font-semibold bg-brand-50 hover:bg-brand-100 px-2.5 py-1 rounded-lg flex items-center gap-1 transition">
+                            <i class="fa-solid fa-microphone text-rose-500 animate-pulse"></i> Dictar por voz
+                        </button>
+                    </div>
+                    <textarea rows="3" class="w-full bg-slate-50 border border-slate-200 rounded-xl p-3 text-xs text-slate-700 focus:outline-none focus:border-brand-500 focus:bg-white resize-none" placeholder="Escribe u orienta las observaciones del estado del paciente..."></textarea>
+                </section>
+
+                <!-- EnfAI Assistant Suggestion Box -->
+                <section class="bg-gradient-to-r from-emerald-50 to-teal-50 border border-emerald-200/80 rounded-2xl p-3.5 space-y-2 relative">
+                    <div class="flex items-center justify-between">
+                        <div class="flex items-center gap-2">
+                            <div class="w-7 h-7 rounded-lg bg-emerald-600 text-white flex items-center justify-center font-bold text-xs shadow-sm">
+                                <i class="fa-solid fa-robot"></i>
+                            </div>
+                            <div>
+                                <h4 class="font-bold text-xs text-slate-900">Asistente EnfAI</h4>
+                                <p class="text-[10px] text-emerald-700 font-medium">Sugerencia Diagnóstica NANDA/NIC</p>
+                            </div>
+                        </div>
+                        <span class="text-[10px] font-bold text-emerald-700 bg-white px-2 py-0.5 rounded-full border border-emerald-200">
+                            Alta Precisión
+                        </span>
+                    </div>
+
+                    <p class="text-xs text-slate-700 leading-relaxed bg-white/80 p-2.5 rounded-xl border border-emerald-100">
+                        <strong class="text-emerald-800 font-semibold">Evaluación:</strong> Paciente estable hemodinámicamente. 
+                        <br><span class="text-[11px] text-slate-600">Sugerencia NANDA: Dominio 11 - Seguridad/Protección (00004 Riesgo de infección).</span>
+                    </p>
+                </section>
+
+                <!-- FUA Toggle Auto-Generation -->
+                <div class="bg-white rounded-2xl p-3.5 border border-slate-100 shadow-sm flex items-center justify-between">
+                    <div class="flex items-center gap-3">
+                        <div class="w-8 h-8 rounded-xl bg-purple-50 text-purple-600 flex items-center justify-center text-sm font-bold">
+                            <i class="fa-solid fa-file-invoice"></i>
+                        </div>
+                        <div>
+                            <h4 class="font-bold text-xs text-slate-800">Generar FUA Automático</h4>
+                            <p class="text-[10px] text-slate-500">Sincronizar con el sistema SIS / MINSA</p>
+                        </div>
+                    </div>
+                    <!-- Switch toggle -->
+                    <label class="relative inline-flex items-center cursor-pointer">
+                        <input type="checkbox" value="" class="sr-only peer" checked>
+                        <div class="w-11 h-6 bg-slate-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-slate-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-brand-600"></div>
+                    </label>
+                </div>
+
+            </main>
+
+            <!-- Fixed Bottom Action Bar -->
+            <footer class="absolute bottom-0 left-0 right-0 bg-white/90 backdrop-blur-md border-t border-slate-100 p-4 z-40">
+                <div class="flex items-center gap-2">
+                    <button class="w-12 h-12 rounded-2xl bg-slate-100 text-slate-600 font-bold flex items-center justify-center hover:bg-slate-200 transition">
+                        <i class="fa-solid fa-bookmark"></i>
+                    </button>
+                    <button class="flex-1 h-12 bg-gradient-to-r from-brand-600 to-brand-700 text-white rounded-2xl font-bold text-sm shadow-lg shadow-brand-500/20 hover:opacity-95 transition flex items-center justify-center gap-2">
+                        <span>Guardar y Registrar Atención</span>
+                        <i class="fa-solid fa-circle-check"></i>
+                    </button>
+                </div>
+            </footer>
+
+            <!-- Bottom Indicator Bar -->
+            <div class="h-5 bg-white flex items-center justify-center pb-1">
+                <div class="w-32 h-1 bg-slate-300 rounded-full"></div>
+            </div>
+
+        </div>
+    </div>
+
+</body>
+</html>
