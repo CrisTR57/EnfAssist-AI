@@ -6,3 +6,52 @@ datasource db {
   provider = "postgresql"
   url      = env("DATABASE_URL")
 }
+
+enum Role {
+  ADMIN
+  ENFERMERO
+  PACIENTE
+}
+
+model User {
+  id           String        @id @default(cuid())
+  dni          String        @unique
+  nombres      String
+  apellidos    String
+  correo       String        @unique
+  passwordHash String
+  activo       Boolean       @default(true)
+  rol          Role
+  pacientes    UserPatient[]
+  createdAt    DateTime      @default(now())
+  updatedAt    DateTime      @updatedAt
+
+  @@index([rol])
+  @@index([activo])
+  @@index([apellidos, nombres])
+}
+
+model Patient {
+  id             String        @id @default(cuid())
+  dni            String        @unique
+  nombres        String
+  apellidos      String
+  fechaNacimiento DateTime?
+  sexo           String?
+  usuarios       UserPatient[]
+  createdAt      DateTime      @default(now())
+  updatedAt      DateTime      @updatedAt
+
+  @@index([apellidos, nombres])
+}
+
+model UserPatient {
+  userId    String
+  patientId String
+  createdAt DateTime @default(now())
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  patient   Patient  @relation(fields: [patientId], references: [id], onDelete: Cascade)
+
+  @@id([userId, patientId])
+  @@index([patientId])
+}
