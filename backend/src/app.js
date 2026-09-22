@@ -2,6 +2,7 @@ const express = require('express');
 const helmet = require('helmet');
 const morgan = require('morgan');
 const authRoutes = require('./routes/auth.routes');
+const patientRoutes = require('./routes/patient.routes');
 
 function createApp() {
   const app = express();
@@ -36,6 +37,7 @@ function createApp() {
   });
 
   app.use('/api/auth', authRoutes);
+  app.use('/api/patients', patientRoutes);
 
   app.use((error, _req, res, _next) => {
     console.error(error);
