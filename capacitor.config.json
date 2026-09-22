@@ -1,0 +1,6 @@
+{
+  "appId": "com.enfassist.ai",
+  "appName": "EnfAssist-AI",
+  "webDir": "www",
+  "bundledWebRuntime": false
+}
