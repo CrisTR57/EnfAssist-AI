@@ -88,6 +88,9 @@ function patientLookup(value) {
 }
 
 function handlePrismaError(error, res, next) {
+  if (error?.statusCode) {
+    return res.status(error.statusCode).json({ error: error.message });
+  }
   if (error?.code === 'P2002') {
     return res.status(409).json({ error: 'patient_unique_field_conflict' });
   }
