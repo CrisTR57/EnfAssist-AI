@@ -13,7 +13,6 @@ const patientProfileScreen = document.querySelector('#patient-profile-screen');
 const patientDashboardScreen = document.querySelector('#patient-dashboard-screen');
 const adminDashboardScreen = document.querySelector('#admin-dashboard-screen');
 const rolePanelScreen = document.querySelector('#role-panel-screen');
-const qrPatientsKey = 'enfassist-qr-patients-v1';
 const clinicalRecordsKey = 'enfassist-clinical-records-v1';
 const fuaDraftsKey = 'enfassist-fua-drafts-v1';
 const usersKey = 'enfassist-users-v1';
@@ -72,14 +71,77 @@ async function restoreSession() {
     currentUser = null;
   }
 }
-const defaultQrPatients = [
-  { id: 'PAT-8F4K-29XM-7QPL', name: 'Juan Pérez Ramírez', dni: '12345678', qrStatus: 'Activo', age: '65 años', sex: 'Masculino', bloodType: 'O+', address: 'Jr. Los Sauces 123, Tingo María', phone: '987 654 321', allergies: 'Penicilina', chronicConditions: 'Hipertensión arterial', regularMedications: 'Losartán 50 mg · una vez al día' },
-  { id: 'PAT-3M7P-X92K-4LQD', name: 'María López García', dni: '87654321', qrStatus: 'Activo', age: '42 años', sex: 'Femenino', bloodType: 'A+', address: 'Av. Perú 450, Tingo María', phone: '912 456 781', allergies: 'Sin alergias registradas', chronicConditions: 'Diabetes mellitus tipo 2', regularMedications: 'Metformina 850 mg · cada 12 horas' },
-  { id: 'PAT-6R8A-15NK-9WTC', name: 'Rosa Isuiza Flores', dni: '45678912', qrStatus: 'Activo', age: '58 años', sex: 'Femenino', bloodType: 'B+', address: 'Jr. Amazonas 89, Tingo María', phone: '945 830 265', allergies: 'AINEs', chronicConditions: 'Asma bronquial', regularMedications: 'Salbutamol inhalador · según indicación' }
-];
-const storedQrPatients = JSON.parse(localStorage.getItem(qrPatientsKey) || 'null');
-let qrPatients = (storedQrPatients || defaultQrPatients).map((patient) => ({ ...defaultQrPatients.find((item) => item.id === patient.id), ...patient }));
-let selectedQrPatient = qrPatients[0];
+let qrPatients = [];
+let selectedQrPatient = null;
+let patientsLoaded = false;
+let patientsLoading = null;
+
+function patientAge(fechaNacimiento) {
+  if (!fechaNacimiento) return '';
+  const birthDate = new Date(fechaNacimiento);
+  if (Number.isNaN(birthDate.getTime())) return '';
+  const now = new Date();
+  let age = now.getFullYear() - birthDate.getFullYear();
+  const beforeBirthday = now.getMonth() < birthDate.getMonth()
+    || (now.getMonth() === birthDate.getMonth() && now.getDate() < birthDate.getDate());
+  if (beforeBirthday) age -= 1;
+  return age >= 0 ? `${age} años` : '';
+}
+
+function mapApiPatient(patient) {
+  const name = [patient.nombres, patient.apellidos].filter(Boolean).join(' ');
+  const qrCode = patient.qrCode || patient.id;
+  return {
+    ...patient,
+    databaseId: patient.id,
+    id: qrCode,
+    qrCode,
+    name,
+    age: patientAge(patient.fechaNacimiento),
+    sex: patient.sexo || '',
+    bloodType: patient.tipoSangre || '',
+    address: patient.direccion || '',
+    phone: patient.telefono || '',
+    allergies: patient.alergias || '',
+    chronicConditions: patient.enfermedadesCronicas || '',
+    regularMedications: patient.medicamentosHabituales || '',
+    historyId: patient.historiaClinica || ''
+  };
+}
+
+function cachePatient(patient) {
+  const index = qrPatients.findIndex((item) => item.databaseId === patient.databaseId);
+  if (index === -1) qrPatients = [...qrPatients, patient];
+  else qrPatients[index] = patient;
+  selectedQrPatient = patient;
+  return patient;
+}
+
+async function loadPatients(force = false) {
+  if (patientsLoading) return patientsLoading;
+  if (patientsLoaded && !force) return qrPatients;
+  patientsLoading = fetch(`${apiBaseUrl}/api/patients`, { headers: authHeaders() })
+    .then(async (response) => {
+      const payload = await response.json().catch(() => ({}));
+      if (!response.ok) throw new Error(payload.error || 'No fue posible cargar los pacientes.');
+      qrPatients = (payload.patients || []).map(mapApiPatient);
+      patientsLoaded = true;
+      if (!selectedQrPatient || !qrPatients.some((patient) => patient.databaseId === selectedQrPatient.databaseId)) {
+        selectedQrPatient = qrPatients[0] || null;
+      }
+      return qrPatients;
+    })
+    .finally(() => { patientsLoading = null; });
+  return patientsLoading;
+}
+
+async function fetchPatient(identifier) {
+  const response = await fetch(`${apiBaseUrl}/api/patients/${encodeURIComponent(identifier)}`, { headers: authHeaders() });
+  const payload = await response.json().catch(() => ({}));
+  if (!response.ok) throw new Error(payload.error || 'Paciente no encontrado.');
+  return cachePatient(mapApiPatient(payload.patient));
+}
+
 let clinicalRecords = JSON.parse(localStorage.getItem(clinicalRecordsKey) || '[]');
 let qrScanStream;
 let qrDetectorTimer;
@@ -461,13 +523,21 @@ function showQrManagement() {
   window.scrollTo(0, 0);
 }
 
-function renderQrPatients(filter = '') {
-  const matches = qrPatients.filter((patient) => [patient.name, patient.dni, patient.id].some((value) => value.toLowerCase().includes(filter.trim().toLowerCase())));
-  document.querySelector('#qr-list-caption').textContent = `${matches.length} paciente${matches.length === 1 ? '' : 's'} registrado${matches.length === 1 ? '' : 's'}`;
+async function renderQrPatients(filter = '') {
   const list = document.querySelector('#qr-patient-list');
-  list.innerHTML = matches.length ? matches.map((patient) => `<article class="qr-patient-row"><div class="qr-row-avatar">${patient.name.split(' ').map((name) => name[0]).slice(0, 2).join('')}</div><div><strong>${patient.name}</strong><span>DNI: ${patient.dni}</span><small>ID: ${patient.id}</small><em>● ${patient.qrStatus}</em></div><div class="qr-row-actions"><button type="button" data-profile-id="${patient.id}">Ver ficha</button><button type="button" data-qr-id="${patient.id}">Ver QR</button></div></article>`).join('') : '<p class="qr-empty">No se encontraron pacientes.</p>';
-  list.querySelectorAll('[data-qr-id]').forEach((button) => button.addEventListener('click', () => showQrDetail(button.dataset.qrId)));
-  list.querySelectorAll('[data-profile-id]').forEach((button) => button.addEventListener('click', () => showPatientProfile(button.dataset.profileId)));
+  list.innerHTML = '<p class="qr-empty">Cargando pacientes…</p>';
+  try {
+    await loadPatients();
+    const term = filter.trim().toLowerCase();
+    const matches = qrPatients.filter((patient) => [patient.name, patient.dni, patient.id].some((value) => String(value || '').toLowerCase().includes(term)));
+    document.querySelector('#qr-list-caption').textContent = `${matches.length} paciente${matches.length === 1 ? '' : 's'} registrado${matches.length === 1 ? '' : 's'}`;
+    list.innerHTML = matches.length ? matches.map((patient) => `<article class="qr-patient-row"><div class="qr-row-avatar">${patient.name.split(' ').map((name) => name[0]).slice(0, 2).join('')}</div><div><strong>${escapeHtml(patient.name)}</strong><span>DNI: ${escapeHtml(patient.dni)}</span><small>QR: ${escapeHtml(patient.id)}</small><em>● ${escapeHtml(patient.qrStatus || 'Activo')}</em></div><div class="qr-row-actions"><button type="button" data-profile-id="${escapeHtml(patient.id)}">Ver ficha</button><button type="button" data-qr-id="${escapeHtml(patient.id)}">Ver QR</button></div></article>`).join('') : '<p class="qr-empty">No se encontraron pacientes.</p>';
+    list.querySelectorAll('[data-qr-id]').forEach((button) => button.addEventListener('click', () => showQrDetail(button.dataset.qrId)));
+    list.querySelectorAll('[data-profile-id]').forEach((button) => button.addEventListener('click', () => showPatientProfile(button.dataset.profileId)));
+  } catch (error) {
+    list.innerHTML = '<p class="qr-empty">No fue posible cargar los pacientes.</p>';
+    notify(error.message);
+  }
 }
 
 function showQrDetail(identifier) {
@@ -485,9 +555,14 @@ function showQrDetail(identifier) {
   window.scrollTo(0, 0);
 }
 
-function showPatientProfile(identifier) {
-  const patient = qrPatients.find((item) => item.id === identifier);
-  if (!patient) return notify('Paciente no encontrado.');
+async function showPatientProfile(identifier) {
+  let patient;
+  try {
+    patient = await fetchPatient(identifier);
+  } catch (error) {
+    notify(error.message);
+    return;
+  }
   selectedQrPatient = patient;
   stopQrScanner();
   hideRoleDashboards();
@@ -551,12 +626,24 @@ function generateUniqueQr() {
   return id;
 }
 
-function generateQrForSelected() {
-  const patient = qrPatients.find((item) => !item.id);
-  if (!patient) return notify('Todos los pacientes registrados ya tienen un QR único');
-  patient.id = generateUniqueQr(); patient.qrStatus = 'Activo';
-  localStorage.setItem(qrPatientsKey, JSON.stringify(qrPatients));
-  showQrDetail(patient.id);
+async function generateQrForSelected() {
+  const patient = selectedQrPatient || qrPatients[0];
+  if (!patient) return notify('Selecciona un paciente antes de generar su QR.');
+  if (patient.qrCode && patient.qrCode !== patient.databaseId) return showQrDetail(patient.id);
+  const qrCode = generateUniqueQr();
+  try {
+    const response = await fetch(`${apiBaseUrl}/api/patients/${encodeURIComponent(patient.databaseId || patient.id)}`, {
+      method: 'PATCH',
+      headers: { 'Content-Type': 'application/json', ...authHeaders() },
+      body: JSON.stringify({ qrCode, qrStatus: 'Activo' })
+    });
+    const payload = await response.json().catch(() => ({}));
+    if (!response.ok) throw new Error(payload.error || 'No fue posible generar el QR.');
+    const updated = cachePatient(mapApiPatient(payload.patient));
+    showQrDetail(updated.id);
+  } catch (error) {
+    notify(error.message);
+  }
 }
 
 async function showScanner() {
@@ -613,11 +700,19 @@ function stopQrScanner() {
   document.querySelector('.qr-scan-stage')?.classList.remove('camera-live');
 }
 
-function findQrPatient(rawCode) {
+async function findQrPatient(rawCode) {
   if (qrDetectionLocked) return false;
   const normalizedCode = String(rawCode).trim().toUpperCase();
-  const patient = qrPatients.find((item) => item.id === normalizedCode);
-  if (!patient) {
+  if (!normalizedCode) return false;
+  try {
+    const patient = await fetchPatient(normalizedCode);
+    qrDetectionLocked = true;
+    stopCamera();
+    stopQrScanner();
+    selectedQrPatient = patient;
+    await showPatientProfile(patient.id);
+    return true;
+  } catch (_error) {
     qrDetectionLocked = true;
     setScannerStatus('Código QR no válido o paciente no encontrado. Intenta nuevamente.');
     setScannerStatus('Código QR no válido o paciente no encontrado. Ingresa el código o intenta nuevamente.', 'qr-scan-status');
@@ -625,12 +720,6 @@ function findQrPatient(rawCode) {
     window.setTimeout(() => { qrDetectionLocked = false; }, 1800);
     return false;
   }
-  qrDetectionLocked = true;
-  stopCamera();
-  stopQrScanner();
-  selectedQrPatient = patient;
-  showPatientProfile(patient.id);
-  return true;
 }
 
 function stopCamera() {
