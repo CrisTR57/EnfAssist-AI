@@ -51,6 +51,9 @@ router.post('/register', async (req, res, next) => {
     if (!validRoles.has(rol)) {
       return res.status(400).json({ error: 'invalid_role' });
     }
+    if (rol !== 'PACIENTE') {
+      return res.status(403).json({ error: 'privileged_role_registration_forbidden' });
+    }
 
     const existing = await prisma.user.findFirst({
       where: { OR: [{ dni }, { correo }] },
