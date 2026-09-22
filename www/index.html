@@ -1,0 +1,154 @@
+<!doctype html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="theme-color" content="#0875d1" />
+    <title>EnfAssist-AI</title>
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <main class="app-shell" aria-live="polite">
+      <section id="login-screen" class="screen login-screen">
+        <div class="brand">
+          <div class="brand-mark" aria-hidden="true">✚</div>
+          <h1>EnfAssist<span>-AI</span></h1>
+          <p>Asistente Inteligente de Enfermería</p>
+        </div>
+        <div class="login-copy">
+          <h2>Bienvenido nuevamente</h2>
+          <p>Ingresa tus credenciales para continuar</p>
+        </div>
+        <form id="login-form" class="login-form">
+          <label>Usuario / DNI<input required name="username" inputmode="numeric" placeholder="Ej. 12345678" /></label>
+          <label>Contraseña<input required name="password" type="password" placeholder="Ingresa tu contraseña" /></label>
+          <div class="form-row"><label class="check"><input type="checkbox" checked /> Recordarme</label><button type="button" class="link">¿Olvidaste tu contraseña?</button></div>
+          <button class="primary-button" type="submit">🔒 &nbsp; INGRESAR</button>
+        </form>
+        <p id="login-feedback" class="login-feedback" role="status" hidden></p>
+        <p class="signup">¿No tienes cuenta? <button type="button" class="link">Registrar usuario</button></p>
+      </section>
+
+      <section id="dashboard-screen" class="screen dashboard-screen" hidden>
+        <header class="topbar">
+          <button id="menu-toggle" class="icon-button" aria-label="Abrir menú">☰</button>
+          <div><strong>EnfAssist-AI</strong><small>Área: Enfermería</small></div>
+          <button class="bell" aria-label="5 alertas pendientes">♟<b>5</b></button>
+          <div class="avatar" aria-label="Perfil de María Fernández">MF</div>
+        </header>
+        <div class="content">
+          <section class="welcome"><div><p>¡Buenos días!</p><h2>Lic. María Fernández</h2><small>Hoy es 21 de julio de 2026</small></div><div class="system-status">✓<small>Sistema<br /><b>Activo</b></small></div></section>
+          <section class="stats" aria-label="Resumen"><article><i>♟</i><strong>245</strong><span>Pacientes<br />registrados</span></article><article><i>▣</i><strong>37</strong><span>Atenciones<br />hoy</span></article><article><i>▤</i><strong>18</strong><span>FUAs<br />generados</span></article><article><i>♟</i><strong class="warning">5</strong><span>Alertas<br />pendientes</span></article></section>
+          <h3>Accesos rápidos</h3>
+          <section class="quick-grid"><button data-action="Escanear QR de paciente">▣<span>Escanear QR<br />de Paciente</span></button><button data-action="Registro Clínico IA">✦<span>Registro Clínico<br />IA</span></button><button data-action="Generar FUA con IA">▤<span>Generar FUA<br />con IA</span></button><button data-action="Ver pacientes">♟<span>Ver Pacientes</span></button><button data-action="Reportes">▥<span>Reportes</span></button><button data-action="EnfAI Asistente">☻<span>EnfAI<br />Asistente</span></button></section>
+          <div class="section-title"><h3>Atenciones recientes</h3><button class="link" type="button">Ver todas</button></div>
+          <section class="recent-list">
+            <article><div class="patient-avatar man">JP</div><time>10:45 a.m.</time><div><strong>Juan Pérez</strong><span>Control de signos vitales</span></div><em>Completada</em><b>›</b></article>
+            <article><div class="patient-avatar woman">RI</div><time>09:20 a.m.</time><div><strong>Rosa Isuiza</strong><span>Curación + Procedimiento</span></div><em>Completada</em><b>›</b></article>
+            <article><div class="patient-avatar woman">ML</div><time>08:15 a.m.</time><div><strong>María López</strong><span>Triaje</span></div><em>Completada</em><b>›</b></article>
+          </section>
+        </div>
+        <nav class="bottom-nav"><button class="active">⌂<span>Inicio</span></button><button>♟<span>Pacientes</span></button><button class="new-care" data-action="Registro Clínico IA">✦<span>Registro IA</span></button><button data-action="Generar FUA con IA">▤<span>FUA</span></button><button data-action="EnfAI Asistente">☻<span>EnfAI</span></button></nav>
+      </section>
+
+      <section id="scanner-screen" class="screen scanner-screen" hidden>
+        <header class="scanner-header">
+          <button id="scanner-back" class="round-control" aria-label="Volver">‹</button>
+          <div><strong>Escanear QR de Paciente</strong><small>Acerca el código QR al marco</small></div>
+          <button id="flash-button" class="round-control" aria-label="Activar flash">⌁</button>
+        </header>
+        <div class="camera-stage">
+          <video id="camera-video" autoplay playsinline muted></video>
+          <div class="camera-fallback">La cámara se activará al abrir esta pantalla.</div>
+          <div class="scanner-tip">▣ <span>Posiciona el código QR<br />dentro del marco</span></div>
+          <div class="scanner-frame" aria-label="Marco de escaneo"><span></span></div>
+          <div class="scan-line"></div>
+          <div class="scanner-tools">
+            <label class="camera-tool">▧<span>Galería</span><input id="gallery-input" type="file" accept="image/*" /></label>
+            <button id="flash-tool" class="camera-tool" type="button">ϟ<span>Flash</span><small>Automático</small></button>
+          </div>
+          <p id="scanner-status" class="secure-note">ⓘ &nbsp; El código QR contiene información segura del paciente</p>
+        </div>
+        <section id="patient-card" class="patient-sheet" hidden>
+          <div class="sheet-handle"></div>
+          <div class="patient-heading"><span class="identified">✓</span><div><h2>Paciente identificado</h2><p>Información obtenida del código QR</p></div><em>Conectado ●</em></div>
+          <article class="patient-profile"><div class="large-avatar">JP</div><div><h3>Juan Pérez Ramírez</h3><p>ID: PAC-0001254 &nbsp;•&nbsp; DNI: 12345678</p><p>♙ &nbsp;65 años &nbsp;•&nbsp; ♂ Masculino &nbsp;•&nbsp; O+</p><p>Dirección: Jr. Los Sauces 123, Tingo María</p><p>Teléfono: 987 654 321</p></div><div class="last-care">ⓘ &nbsp; Última atención: 12/07/2026 &nbsp;•&nbsp; Control de signos vitales</div><div class="patient-actions"><button type="button" data-action="Ver perfil completo">♙ &nbsp; Ver perfil completo</button><button type="button" data-action="Registro Clínico IA">✦ &nbsp; Registro clínico IA</button></div></article>
+        </section>
+        <nav class="bottom-nav scanner-nav"><button id="scanner-home">⌂<span>Inicio</span></button><button>♙<span>Pacientes</span></button><button class="new-care active">▣<span>Escanear</span></button><button>▤<span>FUA</span></button><button>☻<span>EnfAI</span></button></nav>
+      </section>
+      <section id="care-screen" class="screen care-screen" hidden>
+        <header class="care-header"><button id="care-back" class="round-control" aria-label="Volver">&lsaquo;</button><div><strong>Registro Clínico IA</strong><small>Atención por voz, con revisión profesional</small></div><button class="round-control" type="button" data-action="Ayuda">?</button></header>
+        <form id="care-form" class="care-form">
+          <section class="selected-patient"><div id="care-patient-initials" class="mini-avatar">JP</div><div><small>Paciente seleccionado</small><strong id="care-patient-name">Juan Pérez Ramírez</strong><span id="care-patient-summary">PAC-0001254 · 65 años · O+</span></div><button type="button" data-action="Cambiar paciente">Cambiar</button></section>
+          <section id="care-patient-alerts" class="care-patient-alerts" hidden aria-live="polite"></section>
+          <section class="guided-card"><div class="guided-title"><div><b id="guided-step-badge">1</b><div><strong>Entrevista clínica guiada</strong><small id="guided-category">Datos del paciente</small></div></div><span id="guided-progress">1 de 26</span></div><h2 id="guided-question">¿Confirmas la identidad del paciente seleccionado?</h2><p id="guided-help">Verifica nombre y DNI antes de continuar.</p><label id="guided-answer-label">Respuesta<input id="guided-answer" placeholder="Escribe la respuesta" /></label><div class="guided-actions"><button id="guided-previous" type="button" class="draft-button">Anterior</button><button id="guided-next" type="button" class="save-care">Siguiente</button></div><button id="guided-review" type="button" class="guided-review">Ver revisión completa</button></section>
+          <section class="voice-card"><div class="voice-card-title"><div><b>✦</b><div><strong>Dictado clínico rápido</strong><small>También puedes describir la atención por voz o texto.</small></div></div><span id="voice-status">Listo para escuchar</span></div><button id="voice-record" class="voice-record" type="button" aria-pressed="false"><i>●</i> Iniciar dictado</button><p class="voice-tip">Ejemplo: “Paciente estable, presión 120/80, temperatura 37 grados, se administra paracetamol 500 mg vía oral”.</p><label>Transcripción<input id="voice-transcript" placeholder="El dictado aparecerá aquí; también puedes escribirlo." /></label><button id="generate-clinical-draft" class="draft-button generate-draft" type="button">✦ Extraer datos y abrir revisión</button></section>
+          <section id="clinical-draft" class="clinical-draft" hidden aria-live="polite"><div class="draft-heading"><div><b>✦</b><div><strong>Revisión del registro clínico</strong><small>Corrige los datos antes de enviarlos a FUA IA.</small></div></div><em>Editable</em></div><section class="form-card"><h2>Paciente y atención</h2><div class="review-grid"><label>Identidad confirmada<input id="draft-identity" placeholder="Confirmado" /></label><label>Edad<input id="draft-age" placeholder="Edad" /></label><label>Sexo<input id="draft-sex" placeholder="Sexo" /></label><label>Fecha y hora<input id="draft-date" type="datetime-local" /></label><label>Tipo de atención<input id="draft-care-type" placeholder="Ej. Consulta externa" /></label><label>Servicio / área<input id="draft-service" placeholder="Ej. Enfermería" /></label><label class="wide">Antecedentes importantes<textarea id="draft-background" rows="2" placeholder="Antecedentes"></textarea></label><label class="wide">Enfermedades crónicas<textarea id="draft-conditions" rows="2" placeholder="Enfermedades crónicas"></textarea></label><label class="wide">Alergias<textarea id="draft-allergies" rows="2" placeholder="Alergias"></textarea></label><label class="wide">Motivo de atención<input id="draft-reason" placeholder="Motivo de consulta o atención" /></label></div></section><section class="form-card"><h2>Signos vitales</h2><div class="vitals-grid"><label>Presión arterial<input id="draft-bp" inputmode="numeric" placeholder="120/80" /><small>mmHg</small></label><label>Frecuencia cardíaca<input id="draft-heart-rate" inputmode="numeric" placeholder="72" /><small>lpm</small></label><label>Temperatura<input id="draft-temp" inputmode="decimal" placeholder="36.5" /><small>°C</small></label><label>Saturación O₂<input id="draft-o2" inputmode="numeric" placeholder="98" /><small>%</small></label><label>Peso<input id="draft-weight" inputmode="decimal" placeholder="70" /><small>kg</small></label><label>Talla<input id="draft-height" inputmode="decimal" placeholder="165" /><small>cm</small></label></div></section><section class="form-card"><h2>Diagnóstico y evaluación</h2><div class="review-grid"><label class="wide">Diagnóstico principal<input id="draft-diagnosis-main" placeholder="Diagnóstico principal" /></label><label class="wide">Diagnósticos secundarios<textarea id="draft-diagnosis-secondary" rows="2" placeholder="Diagnósticos secundarios"></textarea></label><label>Código CIE-10<input id="draft-icd10" placeholder="Opcional" /></label><label class="wide">Evaluación clínica<textarea id="draft-evaluation" rows="3" placeholder="Evaluación del paciente"></textarea></label></div></section><section class="form-card"><h2>Procedimientos y medicamentos</h2><div class="review-grid"><label class="wide">Procedimientos realizados<textarea id="draft-procedures" rows="2" placeholder="Uno por línea o separados por coma"></textarea></label><label class="wide">Actividades realizadas<textarea id="draft-activities" rows="2" placeholder="Actividades de enfermería"></textarea></label><label>Medicamento<input id="draft-medication-name" placeholder="Nombre" /></label><label>Dosis<input id="draft-medication-dose" placeholder="Ej. 500 mg" /></label><label>Vía<input id="draft-medication-route" placeholder="Ej. Oral" /></label><label>Frecuencia<input id="draft-medication-frequency" placeholder="Ej. Cada 8 h" /></label></div></section><section class="form-card"><label>Evolución y observaciones<textarea id="draft-observations" rows="4" placeholder="Evolución del paciente y observaciones relevantes"></textarea></label></section><section class="clinical-warning">ⓘ Registro Clínico IA organiza la información como borrador. El personal responsable debe verificar identidad, signos, dosis, diagnósticos y decisión clínica antes de guardarlo o enviarlo a FUA IA.</section><div class="care-actions"><button id="save-clinical-draft" class="draft-button" type="button">Guardar borrador</button><button class="save-care" type="submit">✓ &nbsp; Confirmar y enviar a FUA IA</button></div></section>
+        </form>
+        <nav class="bottom-nav care-nav"><button id="care-home">⌂<span>Inicio</span></button><button>♙<span>Pacientes</span></button><button class="new-care active">✦<span>Registro IA</span></button><button>▤<span>FUA</span></button><button>☻<span>EnfAI</span></button></nav>
+      </section>
+
+      <aside id="main-menu" class="main-menu" hidden>
+        <button id="menu-close" class="menu-close" aria-label="Cerrar menú">×</button>
+        <div class="menu-brand"><div class="brand-mark">✚</div><div><strong>EnfAssist-AI</strong><span>Área: Enfermería</span></div></div>
+        <nav class="menu-links" aria-label="Menú principal">
+          <button data-menu="Inicio">⌂ <span>Inicio</span></button><button data-menu="Pacientes">♙ <span>Pacientes</span></button><button data-menu="Gestión de códigos QR">▣ <span>Gestión de códigos QR</span></button><button data-menu="Asistencia de enfermería">✚ <span>Asistencia de enfermería</span></button><button data-menu="FUA">▤ <span>FUA</span></button><button data-menu="Vacunas">✦ <span>Vacunas</span></button><button data-menu="Reportes">▥ <span>Reportes</span></button><button data-menu="Configuración">⚙ <span>Configuración</span></button>
+        </nav>
+      </aside>
+      <section id="fua-screen" class="screen fua-screen" hidden>
+        <header class="care-header"><button id="fua-back" class="round-control" aria-label="Volver">&lsaquo;</button><div><strong>Generar FUA con IA</strong><small>Formato Único de Atención - MINSA</small></div><button class="round-control" type="button" data-action="Ayuda FUA">?</button></header>
+        <main class="fua-content">
+          <section class="fua-hero"><div class="fua-icon">▤</div><div><span id="fua-source">Borrador generado con IA</span><h2>FUA N.º <span id="fua-number">371092</span></h2><p>Puesto de Salud Luyando · RENIPRESS 1173</p></div><em>Revisar</em></section>
+          <section class="fua-alert"><b>✦</b><p id="fua-alert-message">Carga un Registro Clínico IA para completar este borrador. Verifica la información antes de generarlo.</p></section>
+          <section class="fua-card"><div class="fua-card-title"><h2>Del asegurado / usuario</h2><span>Editable</span></div><div class="fua-edit-grid"><label>Documento<input id="fua-dni" placeholder="DNI" /></label><label>Historia clínica<input id="fua-history" placeholder="Historia clínica" /></label><label class="wide">Paciente<input id="fua-patient-name" placeholder="Nombre completo" /></label><label>Sexo<input id="fua-sex" placeholder="Sexo" /></label><label>Tipo de sangre<input id="fua-blood" placeholder="Grupo sanguíneo" /></label></div></section>
+          <section class="fua-card"><div class="fua-card-title"><h2>De la atención</h2><span>Editable</span></div><div class="fua-edit-grid"><label>Fecha y hora<input id="fua-date" type="datetime-local" /></label><label>Modalidad<input id="fua-modality" value="Ambulatoria" /></label><label>Tipo de atención<input id="fua-care-type" placeholder="Tipo de atención" /></label><label>Servicio / área<input id="fua-service" placeholder="Servicio o área" /></label><label class="wide">Motivo de atención<input id="fua-reason" placeholder="Motivo de atención" /></label><label class="wide">Procedimientos<input id="fua-procedures" placeholder="Procedimientos realizados" /></label><label class="wide">Medicamentos<input id="fua-medications" placeholder="Medicamentos administrados" /></label></div></section>
+          <section class="fua-card"><div class="fua-card-title"><h2>Signos, diagnóstico y observaciones</h2><span>Editable</span></div><div class="fua-edit-grid"><label>Presión arterial<input id="fua-bp" placeholder="mmHg" /></label><label>Temperatura<input id="fua-temp" placeholder="°C" /></label><label>Frecuencia cardiaca<input id="fua-heart-rate" placeholder="lpm" /></label><label>Saturación O₂<input id="fua-o2" placeholder="%" /></label><label class="wide">Diagnóstico principal<input id="fua-diagnosis" placeholder="Diagnóstico principal" /></label><label>Código CIE-10<input id="fua-icd10" placeholder="Opcional" /></label><label class="wide">Actividades realizadas<textarea id="fua-activities" rows="2" placeholder="Actividades de enfermería"></textarea></label><label class="wide">Evaluación<textarea id="fua-evaluation" rows="3" placeholder="Evaluación del paciente"></textarea></label><label class="wide">Observaciones<textarea id="fua-observations" rows="3" placeholder="Observaciones relevantes"></textarea></label></div></section>
+          <section class="fua-card responsible"><h2>Responsable de la atención</h2><p>Lic. María Fernández · Enfermera</p><p>Registro de colegiatura: pendiente de validar</p></section>
+          <div class="fua-actions"><button id="fua-preview" class="draft-button" type="button">▣ Vista previa</button><button id="fua-export" class="save-care" type="button">▤ Generar borrador FUA</button></div>
+          <p class="fua-disclaimer">Este borrador requiere revisión y firma del personal autorizado antes de cualquier registro oficial.</p>
+        </main>
+        <nav class="bottom-nav fua-nav"><button id="fua-home">⌂<span>Inicio</span></button><button>♙<span>Pacientes</span></button><button class="new-care" data-action="Registro Clínico IA">✦<span>Registro IA</span></button><button class="active">▤<span>FUA</span></button><button>☻<span>EnfAI</span></button></nav>
+      </section>
+      <section id="qr-management-screen" class="screen qr-management-screen" hidden>
+        <header class="care-header"><button id="qr-back" class="round-control" aria-label="Volver">&lsaquo;</button><div><strong>Gestión de códigos QR</strong><small>Identificación segura de pacientes</small></div><button id="qr-menu" class="round-control" type="button" aria-label="Abrir menú">☰</button></header>
+        <main class="qr-content">
+          <label class="qr-search">⌕<input id="qr-search-input" type="search" placeholder="Buscar paciente o DNI" /></label>
+          <p id="qr-list-caption" class="qr-list-caption">Pacientes registrados</p>
+          <section id="qr-patient-list" class="qr-patient-list" aria-live="polite"></section>
+          <div class="qr-bottom-actions"><button id="generate-qr" type="button" class="save-care">＋ Generar QR</button><button id="qr-scan-open" type="button" class="draft-button">▣ Escanear QR</button></div>
+        </main>
+        <nav class="bottom-nav qr-nav"><button id="qr-home">⌂<span>Inicio</span></button><button class="active">♙<span>Pacientes</span></button><button class="new-care" data-action="Registro Clínico IA">✦<span>Registro IA</span></button><button data-action="Generar FUA con IA">▤<span>FUA</span></button><button>☻<span>EnfAI</span></button></nav>
+      </section>
+      <section id="qr-detail-screen" class="screen qr-detail-screen" hidden>
+        <header class="care-header"><button id="qr-detail-back" class="round-control" aria-label="Volver">&lsaquo;</button><div><strong>Código QR del paciente</strong><small>Identificador seguro y permanente</small></div><button id="qr-detail-menu" class="round-control" type="button" aria-label="Abrir menú">☰</button></header>
+        <main class="qr-detail-content"><section class="qr-detail-card"><div class="detail-avatar" id="qr-detail-initials">JP</div><h2 id="qr-detail-name">Juan Pérez Ramírez</h2><p id="qr-detail-dni">DNI: 12345678</p><span class="qr-active">● QR activo</span><div class="qr-code-wrap"><img id="qr-code-image" alt="Código QR del paciente" /><small>El QR contiene solo el identificador único.</small></div><div class="qr-id"><span>Código único</span><strong id="qr-detail-id">PAT-8F4K-29XM-7QPL</strong></div><div class="qr-detail-actions"><button id="download-qr" class="draft-button" type="button">⇩ Descargar QR</button><button id="print-qr" class="save-care" type="button">▣ Imprimir QR</button></div></section></main>
+      </section>
+      <section id="qr-scan-screen" class="screen qr-scan-screen" hidden>
+        <header class="care-header"><button id="qr-scan-back" class="round-control" aria-label="Volver">&lsaquo;</button><div><strong>Escanear código QR</strong><small>Ubica el código dentro del marco</small></div><span></span></header>
+        <main class="qr-scan-stage"><video id="qr-scan-video" autoplay playsinline muted></video><div class="qr-scan-placeholder">La cámara se activará al abrir el escáner.</div><div class="qr-scan-frame"><span></span></div><p id="qr-scan-status">El código QR solo identifica al paciente.</p></main>
+        <div class="manual-qr"><label>¿No se puede usar la cámara? Ingresa el código<input id="manual-qr-input" placeholder="PAT-XXXX-XXXX-XXXX" /></label><button id="manual-qr-search" type="button">Buscar paciente</button></div>
+      </section>
+      <section id="patient-profile-screen" class="screen patient-profile-screen" hidden>
+        <header class="care-header"><button id="patient-profile-back" class="round-control" aria-label="Volver">&lsaquo;</button><div><strong>Ficha de paciente</strong><small>Información registrada</small></div><button id="patient-profile-menu" class="round-control" type="button" aria-label="Abrir menú">☰</button></header>
+        <main class="patient-profile-content"><section class="profile-hero"><div id="profile-initials" class="profile-avatar">JP</div><div><h2 id="profile-name">Juan Pérez Ramírez</h2><p id="profile-dni">DNI: 12345678</p><span>● Paciente activo</span></div><b id="profile-alert-count" class="profile-alert-count" hidden>0 alertas</b></section><section class="profile-card"><h2>Datos personales</h2><dl><div><dt>Código de paciente</dt><dd id="profile-id">PAT-8F4K-29XM-7QPL</dd></div><div><dt>Historia clínica</dt><dd id="profile-history">PAC-0001254</dd></div><div><dt>Edad</dt><dd id="profile-age">65 años</dd></div><div><dt>Sexo</dt><dd id="profile-sex">Masculino</dd></div><div class="profile-wide"><dt>Dirección</dt><dd id="profile-address">Jr. Los Sauces 123, Tingo María</dd></div><div><dt>Teléfono</dt><dd id="profile-phone">987 654 321</dd></div><div><dt>Tipo de sangre</dt><dd id="profile-blood">O+</dd></div></dl></section><section id="profile-alerts" class="profile-alerts" hidden aria-live="polite"></section><section class="profile-card"><h2>Información clínica relevante</h2><dl class="clinical-details"><div><dt>Alergias</dt><dd id="profile-allergies">Sin alergias registradas</dd></div><div><dt>Enfermedades crónicas</dt><dd id="profile-conditions">Sin antecedentes registrados</dd></div><div class="profile-wide"><dt>Medicamentos habituales</dt><dd id="profile-medications">No registrados</dd></div></dl></section><section class="profile-card"><div class="profile-title"><h2>Historial clínico IA</h2><button type="button" data-action="Registro Clínico IA">Nuevo registro</button></div><div id="clinical-history" class="clinical-history" aria-live="polite"></div></section><div class="profile-actions"><button id="profile-view-qr" class="draft-button" type="button">▣ Ver código QR</button><button type="button" class="save-care" data-action="Registro Clínico IA">✦ Registro clínico IA</button></div></main>
+        <nav class="bottom-nav profile-nav"><button id="profile-home">⌂<span>Inicio</span></button><button class="active">♙<span>Pacientes</span></button><button class="new-care" data-action="Registro Clínico IA">✦<span>Registro IA</span></button><button data-action="Generar FUA con IA">▤<span>FUA</span></button><button>☻<span>EnfAI</span></button></nav>
+      </section>
+      <section id="patient-dashboard-screen" class="screen patient-dashboard-screen" hidden>
+        <header class="role-topbar"><div class="avatar" id="patient-dashboard-avatar">ML</div><div><strong id="patient-dashboard-name">María López García</strong><small>Portal del paciente</small></div><button id="patient-logout" class="logout-button" type="button">Salir</button></header>
+        <main class="role-content"><section class="patient-welcome"><span>● Cuenta activa</span><h2>Hola, <span id="patient-first-name">María</span></h2><p>Consulta tu información de salud de forma segura.</p></section><section class="patient-summary"><article><small>Próxima atención</small><strong>Sin citas pendientes</strong><span>Comunícate con tu establecimiento de salud.</span></article><article><small>Alertas personales</small><strong id="patient-alert-summary">0 alertas</strong><span id="patient-alert-detail">Sin alertas registradas</span></article></section><h3>Mi salud</h3><section class="patient-tools"><button type="button" data-patient-action="Signos vitales">♥<span>Signos vitales</span></button><button type="button" data-patient-action="Recetas">▤<span>Recetas</span></button><button type="button" data-patient-action="Perfil">♙<span>Mi perfil</span></button><button type="button" data-patient-action="Código QR">▣<span>Mi código QR</span></button></section><section class="patient-info-card"><h3>Última información clínica</h3><p id="patient-last-info">No hay registros clínicos nuevos.</p></section></main>
+        <nav class="bottom-nav patient-nav"><button class="active" data-patient-action="Inicio">⌂<span>Inicio</span></button><button data-patient-action="Signos vitales">♥<span>Signos</span></button><button data-patient-action="Recetas">▤<span>Recetas</span></button><button data-patient-action="Perfil">♙<span>Perfil</span></button><button data-patient-action="Código QR">▣<span>Mi QR</span></button></nav>
+      </section>
+      <section id="admin-dashboard-screen" class="screen admin-dashboard-screen" hidden>
+        <header class="role-topbar admin-topbar"><div class="avatar">AD</div><div><strong id="admin-dashboard-name">Administrador</strong><small>Gestión del sistema</small></div><button id="admin-logout" class="logout-button" type="button">Salir</button></header>
+        <main class="role-content"><section class="admin-welcome"><span>Panel administrativo</span><h2>Administración EnfAssist-AI</h2><p>Gestiona usuarios y la configuración operativa.</p></section><section class="admin-stats"><article><strong id="admin-user-count">3</strong><span>Usuarios activos</span></article><article><strong>3</strong><span>Roles configurados</span></article><article><strong>0</strong><span>Incidencias hoy</span></article></section><h3>Administración</h3><section class="admin-tools"><button type="button" data-admin-action="Usuarios">♙<strong>Usuarios</strong><span>Roles y accesos</span></button><button type="button" data-admin-action="Configuración">⚙<strong>Configuración</strong><span>Parámetros del sistema</span></button><button type="button" data-admin-action="Reportes">▥<strong>Reportes</strong><span>Indicadores generales</span></button></section><section id="admin-panel-content" class="admin-panel-content"><h3>Usuarios</h3><p>Selecciona una opción para administrar el sistema.</p></section></main>
+      </section>
+      <section id="role-panel-screen" class="screen role-panel-screen" hidden>
+        <header class="care-header"><button id="role-panel-back" class="round-control" aria-label="Volver">&lsaquo;</button><div><strong id="role-panel-title">Mi información</strong><small id="role-panel-subtitle">Portal seguro</small></div><span></span></header>
+        <main id="role-panel-content" class="role-content"></main>
+      </section>
+    </main>
+    <div id="toast" role="status"></div>
+    <script src="https://cdn.jsdelivr.net/npm/jsqr@1.4.0/dist/jsQR.js"></script>
+    <script src="app.js?v=20260917-qr-compatible"></script>
+  </body>
+</html>
