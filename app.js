@@ -935,7 +935,7 @@ document.querySelector('#login-form').addEventListener('submit', async (event) =
     const response = await fetch(`${apiBaseUrl}/api/auth/login`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ identifier: dni, password })
+      body: JSON.stringify({ dni, password })
     });
     const payload = await response.json().catch(() => ({}));
 
