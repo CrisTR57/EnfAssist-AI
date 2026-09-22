@@ -37,13 +37,25 @@ model Patient {
   dni             String        @unique
   nombres         String
   apellidos       String
-  fechaNacimiento DateTime?
-  sexo            String?
-  usuarios        UserPatient[]
+  fechaNacimiento       DateTime?
+  sexo                  String?
+  historiaClinica       String?       @unique
+  qrCode                String?       @unique
+  qrStatus              String        @default("Activo")
+  tipoSangre            String?
+  direccion             String?
+  telefono              String?
+  alergias              String?
+  enfermedadesCronicas  String?
+  medicamentosHabituales String?
+  estado                String        @default("ACTIVO")
+  usuarios              UserPatient[]
   createdAt       DateTime      @default(now())
   updatedAt       DateTime      @updatedAt
 
   @@index([apellidos, nombres])
+  @@index([qrStatus])
+  @@index([estado])
 }
 
 model UserPatient {
