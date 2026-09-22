@@ -27,6 +27,51 @@ function normalizeUser(user, index) {
 }
 let users = (JSON.parse(localStorage.getItem(usersKey) || 'null') || defaultUsers).map(normalizeUser);
 let currentUser = null;
+const authTokenKey = 'enfassist-jwt';
+const apiBaseUrl = window.ENFASSIST_API_URL || (window.location.port === '4174' ? 'http://localhost:3000' : '');
+
+function authHeaders() {
+  const token = sessionStorage.getItem(authTokenKey);
+  return token ? { Authorization: `Bearer ${token}` } : {};
+}
+
+function mapApiUser(user) {
+  const roleMap = { ADMIN: 'admin', ENFERMERO: 'health', PACIENTE: 'patient' };
+  return {
+    ...user,
+    id: user.id,
+    name: [user.nombres, user.apellidos].filter(Boolean).join(' '),
+    dni: user.dni,
+    correo: user.correo,
+    role: roleMap[user.rol] || 'patient',
+    active: user.activo !== false
+  };
+}
+
+function showAuthError(message) {
+  const feedback = document.querySelector('#login-feedback');
+  feedback.textContent = message;
+  feedback.hidden = false;
+}
+
+async function restoreSession() {
+  const token = sessionStorage.getItem(authTokenKey);
+  if (!token) return;
+
+  try {
+    const response = await fetch(`${apiBaseUrl}/api/auth/me`, { headers: authHeaders() });
+    if (!response.ok) throw new Error('session_expired');
+    const payload = await response.json();
+    currentUser = mapApiUser(payload.user);
+    document.querySelector('#login-feedback').hidden = true;
+    if (currentUser.role === 'admin') return showAdminDashboard();
+    if (currentUser.role === 'patient') return showPatientDashboard();
+    showDashboard();
+  } catch (_error) {
+    sessionStorage.removeItem(authTokenKey);
+    currentUser = null;
+  }
+}
 const defaultQrPatients = [
   { id: 'PAT-8F4K-29XM-7QPL', name: 'Juan Pérez Ramírez', dni: '12345678', qrStatus: 'Activo', age: '65 años', sex: 'Masculino', bloodType: 'O+', address: 'Jr. Los Sauces 123, Tingo María', phone: '987 654 321', allergies: 'Penicilina', chronicConditions: 'Hipertensión arterial', regularMedications: 'Losartán 50 mg · una vez al día' },
   { id: 'PAT-3M7P-X92K-4LQD', name: 'María López García', dni: '87654321', qrStatus: 'Activo', age: '42 años', sex: 'Femenino', bloodType: 'A+', address: 'Av. Perú 450, Tingo María', phone: '912 456 781', allergies: 'Sin alergias registradas', chronicConditions: 'Diabetes mellitus tipo 2', regularMedications: 'Metformina 850 mg · cada 12 horas' },
@@ -265,6 +310,7 @@ function deleteManagedUser(userId) {
 
 function logout() {
   stopCamera(); stopQrScanner(); stopVoiceRecognition();
+  sessionStorage.removeItem(authTokenKey);
   currentUser = null;
   hideHealthScreens(); hideRoleDashboards();
   loginScreen.hidden = false;
@@ -877,28 +923,42 @@ function toggleVoiceRecording() {
   clinicalRecognition.start();
 }
 
-document.querySelector('#login-form').addEventListener('submit', (event) => {
+document.querySelector('#login-form').addEventListener('submit', async (event) => {
   event.preventDefault();
   const form = new FormData(event.currentTarget);
   const dni = String(form.get('username') || '').trim();
   const password = String(form.get('password') || '');
-  const user = users.find((item) => item.dni === dni && item.password === password);
-  const feedback = document.querySelector('#login-feedback');
-  if (!user) {
-    feedback.textContent = 'DNI o contraseña incorrectos. Revisa las credenciales de prueba.';
-    feedback.hidden = false;
-    return;
+  const submitButton = event.currentTarget.querySelector('button[type="submit"]');
+  submitButton.disabled = true;
+
+  try {
+    const response = await fetch(`${apiBaseUrl}/api/auth/login`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ identifier: dni, password })
+    });
+    const payload = await response.json().catch(() => ({}));
+
+    if (!response.ok) {
+      const messages = {
+        400: 'Ingresa tu DNI y contraseña.',
+        401: 'DNI o contraseña incorrectos.',
+        403: 'Esta cuenta está desactivada.'
+      };
+      throw new Error(messages[response.status] || 'No fue posible iniciar sesión.');
+    }
+
+    sessionStorage.setItem(authTokenKey, payload.token);
+    currentUser = mapApiUser(payload.user);
+    document.querySelector('#login-feedback').hidden = true;
+    if (currentUser.role === 'admin') return showAdminDashboard();
+    if (currentUser.role === 'patient') return showPatientDashboard();
+    showDashboard();
+  } catch (error) {
+    showAuthError(error.message || 'No fue posible conectar con el servidor.');
+  } finally {
+    submitButton.disabled = false;
   }
-  if (!user.active) {
-    feedback.textContent = 'Esta cuenta está desactivada. Comunícate con el administrador.';
-    feedback.hidden = false;
-    return;
-  }
-  feedback.hidden = true;
-  currentUser = user;
-  if (user.role === 'admin') return showAdminDashboard();
-  if (user.role === 'patient') return showPatientDashboard();
-  showDashboard();
 });
 
 const quickAccessButton = document.querySelector('.quick-access');
@@ -1018,3 +1078,5 @@ document.querySelector('#gallery-input').addEventListener('change', async (event
   setScannerStatus('No se pudo leer el QR de la imagen. Prueba con una imagen nítida o ingresa el código manualmente.');
   notify('No se pudo leer el QR de la imagen');
 });
+
+restoreSession();
